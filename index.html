@@ -2,10 +2,26 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Meine erste GitHub-Webseite</title>
+  <title>Farbkataster</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Willkommen auf meiner Seite!</h1>
-  <p>Diese Seite wird über GitHub Pages gehostet.</p>
+  <h1>Farbkataster</h1>
+
+  <input type="text" id="searchInput" placeholder="Suchen...">
+
+  <table id="farbTable">
+    <thead>
+      <tr>
+        <th>Gebäude</th>
+        <th>Raumnr</th>
+        <th>Farbton</th>
+        <th>Produkt</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="script.js"></script>
 </body>
 </html>
