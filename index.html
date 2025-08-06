@@ -2,26 +2,40 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Farbkataster</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Excel-Tabelle anzeigen</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background-color: #f0f0f0; }
+  </style>
 </head>
 <body>
-  <h1>Farbkataster</h1>
+  <h1>Excel-Tabelle anzeigen (offline)</h1>
+  <p>Wähle eine Excel-Datei (.xlsx), um sie im Browser anzuzeigen:</p>
+  <input type="file" id="excel-file" accept=".xlsx" />
 
-  <input type="text" id="searchInput" placeholder="Suchen...">
+  <div id="output"></div>
 
-  <table id="farbTable">
-    <thead>
-      <tr>
-        <th>Gebäude</th>
-        <th>Raumnr</th>
-        <th>Farbton</th>
-        <th>Produkt</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <script src="xlsx.full.min.js"></script>
+  <script>
+    document.getElementById('excel-file').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
 
-  <script src="script.js"></script>
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const html = XLSX.utils.sheet_to_html(worksheet);
+
+        document.getElementById('output').innerHTML = html;
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+  </script>
 </body>
 </html>
