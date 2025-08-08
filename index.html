@@ -2,38 +2,38 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Farbtonliste (offline)</title>
+  <title>Excel lokal laden</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    h1 { font-size: 24px; }
+    body { font-family: sans-serif; padding: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; }
     th { background-color: #f0f0f0; }
   </style>
 </head>
 <body>
-  <h1>Farbtonliste (Excel direkt geladen)</h1>
-  <div id="output">Lade Tabelle...</div>
+  <h1>Excel-Tabelle lokal laden</h1>
+  <p>Wähle eine Excel-Datei aus, um sie im Browser anzuzeigen:</p>
+  <input type="file" id="fileInput" accept=".xlsx, .xls">
+  <div id="output"></div>
 
   <script src="xlsx.full.min.js"></script>
   <script>
-    async function loadExcelFile(url) {
-      const response = await fetch(url);
-      const arrayBuffer = await response.arrayBuffer();
-      const data = new Uint8Array(arrayBuffer);
-      const workbook = XLSX.read(data, { type: "array" });
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
 
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const html = XLSX.utils.sheet_to_html(worksheet);
-
-      document.getElementById("output").innerHTML = html;
-    }
-
-    // Automatisch laden von farbtonliste.xlsx (muss im gleichen Ordner liegen)
-    loadExcelFile("farbtonliste.xlsx").catch(err => {
-      document.getElementById("output").innerHTML = "<p style='color:red;'>Fehler beim Laden der Datei: " + err + "</p>";
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheet];
+        const html = XLSX.utils.sheet_to_html(worksheet);
+        document.getElementById('output').innerHTML = html;
+      };
+      reader.readAsArrayBuffer(file);
     });
   </script>
 </body>
 </html>
+
