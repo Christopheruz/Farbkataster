@@ -2,34 +2,12 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Excel-Datei lokal laden</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: #333 url('farblogo.png') no-repeat center center fixed;
-      background-size: cover; /* skaliert Bild auf ganze Seite */
-      color: #fff;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 20px;
-      background-color: rgba(255, 255, 255, 0.85);
-      color: #000;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-    th {
-      background-color: #f0f0f0;
-    }
-  </style>
+  <title>Excel lokal laden per Dateiauswahl</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Excel-Datei per Auswahl laden</h1>
-  <p>Wähle eine Excel-Datei aus (z. B. von deinem PC oder Netzlaufwerk):</p>
+  <p>Wähle eine Excel-Datei (z. B. von deinem Netzlaufwerk) aus:</p>
   <input type="file" id="fileInput" accept=".xlsx,.xls" />
   <div id="output"></div>
 
@@ -54,6 +32,5 @@
 </body>
 </html>
 
-</html>
 
 
