@@ -1,33 +1,50 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Excel lokal laden</title>
+  <meta charset="UTF-8" />
+  <title>Excel lokal laden per Dateiauswahl</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; }
-    th { background-color: #f0f0f0; }
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: url('farblogo.jpg') no-repeat center center fixed;
+      background-size: cover; /* skaliert das Bild, sodass es die ganze Fläche füllt */
+      color: #fff; /* Textfarbe anpassen, falls Hintergrund dunkel */
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+      background-color: rgba(255, 255, 255, 0.85); /* leicht transparenter Hintergrund für Lesbarkeit */
+      color: #000; /* Tabellen-Textfarbe */
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
   </style>
 </head>
 <body>
-  <h1>Excel-Tabelle lokal laden</h1>
-  <p>Wähle eine Excel-Datei aus, um sie im Browser anzuzeigen:</p>
-  <input type="file" id="fileInput" accept=".xlsx, .xls">
+  <h1>Excel-Datei per Auswahl laden</h1>
+  <p>Wähle eine Excel-Datei (z. B. von deinem Netzlaufwerk) aus:</p>
+  <input type="file" id="fileInput" accept=".xlsx,.xls" />
   <div id="output"></div>
 
   <script src="xlsx.full.min.js"></script>
   <script>
-    document.getElementById('fileInput').addEventListener('change', function(e) {
-      const file = e.target.files[0];
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
       reader.onload = function(e) {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheet = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheet];
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
         const html = XLSX.utils.sheet_to_html(worksheet);
         document.getElementById('output').innerHTML = html;
       };
@@ -36,4 +53,5 @@
   </script>
 </body>
 </html>
+
 
