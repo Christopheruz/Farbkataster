@@ -4,7 +4,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
 
 /* Header */
 .site-header {
-  background: #222;
+  background: #357593;
   color: #fff;
   min-height: 96px;            /* Höhe des Headers */
   display: flex;
