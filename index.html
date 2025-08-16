@@ -28,36 +28,147 @@
 
   <div class="page-background">
     <main class="container">
-      <h1>Excel-Datei per Auswahl laden</h1>
-      <p>Wähle oben im Header eine Excel-Datei aus.</p>
+  <h1>Excel-Datei per Auswahl laden</h1>
+  <p>Wähle oben im Header eine Excel-Datei aus.</p>
+
+  <div class="layout">
+    <!-- Sidebar (links) -->
+    <aside class="sidebar">
+      <h2 class="sidebar-title">Filter</h2>
+
+      <div class="filter-group">
+        <label for="filterGebaeude">Gebäude</label>
+        <input type="text" id="filterGebaeude" placeholder="z. B. ZOM, UKM A1 …">
+      </div>
+
+      <div class="filter-group">
+        <label for="filterRaum">Raumnr.</label>
+        <input type="text" id="filterRaum" placeholder="z. B. 2.14, 405 …">
+      </div>
+
+      <button type="button" id="clearFilters" class="btn btn-clear">Filter zurücksetzen</button>
+      <p class="hint">Die Filter wirken auf die geladene Tabelle.</p>
+    </aside>
+
+    <!-- Tabelle (rechts) -->
+    <section class="main">
       <div id="output" class="table-wrap"></div>
-    </main>
+    </section>
+  </div>
+</main>
+
   </div>
 
   <script src="xlsx.full.min.js"></script>
-  <script>
-    const fileInput   = document.getElementById('fileInput');
-    const fileNameEl  = document.getElementById('fileName');
-    const outputEl    = document.getElementById('output');
+<script>
+  const fileInput  = document.getElementById('fileInput');
+  const fileNameEl = document.getElementById('fileName');
+  const outputEl   = document.getElementById('output');
 
-    fileInput.addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) { fileNameEl.textContent = ''; return; }
+  // Filter-Inputs
+  const inpGeb   = document.getElementById('filterGebaeude');
+  const inpRaum  = document.getElementById('filterRaum');
+  const btnClear = document.getElementById('clearFilters');
 
-      fileNameEl.textContent = file.name;
+  let tableEl = null;
+  let colIdx = { geb: null, raum: null };
 
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const html = XLSX.utils.sheet_to_html(worksheet);
-        outputEl.innerHTML = html;
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  </script>
+  function normalizeHeader(text) {
+    return String(text || '')
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[.\-]/g, '')
+      .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue');
+  }
+
+  function findHeaderIndexes() {
+    tableEl = outputEl.querySelector('table');
+    colIdx = { geb: null, raum: null };
+    if (!tableEl) return;
+
+    const headerRow = tableEl.tHead?.rows?.[0] || tableEl.rows?.[0];
+    if (!headerRow) return;
+
+    const headers = Array.from(headerRow.cells).map(th => normalizeHeader(th.textContent));
+
+    const candGeb  = ['gebaeude','gebaeudenr','gebaeudenummer','gebaeudeid','gebaeudename','gebaeudebereich','gebaeudekuerzel'];
+    const candRaum = ['raumnr','raumnummer','raum','raumid','raumcode','raumbez'];
+
+    function indexOfAny(cands) {
+      for (let i = 0; i < headers.length; i++) {
+        const h = headers[i];
+        for (const c of cands) { if (h.includes(c)) return i; }
+      }
+      return null;
+    }
+
+    colIdx.geb  = indexOfAny(candGeb);
+    colIdx.raum = indexOfAny(candRaum);
+  }
+
+  function getDataRows() {
+    if (!tableEl) return [];
+    // Wenn <tbody> existiert, nimm dessen Zeilen; sonst alle außer erster (Header)
+    if (tableEl.tBodies && tableEl.tBodies.length && tableEl.tBodies[0].rows.length) {
+      return Array.from(tableEl.tBodies[0].rows);
+    }
+    return Array.from(tableEl.rows).slice(1);
+  }
+
+  function applyFilters() {
+    if (!tableEl) return;
+
+    const fGeb  = (inpGeb.value  || '').toLowerCase().trim();
+    const fRaum = (inpRaum.value || '').toLowerCase().trim();
+
+    const rows = getDataRows();
+    for (const row of rows) {
+      if (!row || row.cells.length === 0) continue;
+
+      const passesGeb = !fGeb  || colIdx.geb  == null || (row.cells[colIdx.geb]  && row.cells[colIdx.geb].textContent.toLowerCase().includes(fGeb));
+      const passesRau = !fRaum || colIdx.raum == null || (row.cells[colIdx.raum] && row.cells[colIdx.raum].textContent.toLowerCase().includes(fRaum));
+
+      row.style.display = (passesGeb && passesRau) ? '' : 'none';
+    }
+  }
+
+  function setupFiltering() {
+    findHeaderIndexes();
+    applyFilters();
+  }
+
+  // Datei laden + Tabelle rendern
+  fileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) { if (fileNameEl) fileNameEl.textContent = ''; return; }
+
+    if (fileNameEl) fileNameEl.textContent = file.name;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const html = XLSX.utils.sheet_to_html(worksheet);
+      outputEl.innerHTML = html;
+
+      // Nach dem Rendern Filter initialisieren
+      setupFiltering();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  // Live-Filter beim Tippen + Zurücksetzen
+  inpGeb?.addEventListener('input', applyFilters);
+  inpRaum?.addEventListener('input', applyFilters);
+  btnClear?.addEventListener('click', () => {
+    inpGeb.value = '';
+    inpRaum.value = '';
+    applyFilters();
+  });
+</script>
+
 </body>
 </html>
 
