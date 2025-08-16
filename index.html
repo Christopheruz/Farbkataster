@@ -8,28 +8,41 @@
 </head>
 <body>
   <header class="site-header">
-    <nav>
-      <a href="#">Start</a>
-      <a href="#">Excel laden</a>
-      <a href="#">Kontakt</a>
+    <nav class="navbar">
+      <div class="links">
+        <a href="#">Start</a>
+        <a href="#" aria-current="page">Excel laden</a>
+        <a href="#">Kontakt</a>
+      </div>
+
+      <!-- Upload im Header -->
+      <div class="header-actions">
+        <input type="file" id="fileInput" accept=".xlsx,.xls" class="visually-hidden" />
+        <label for="fileInput" class="btn">Excel-Datei auswählen</label>
+        <span id="fileName" class="file-name" aria-live="polite"></span>
+      </div>
     </nav>
   </header>
 
-  
-<div class="page-background">
-  <main class="container">
-    <h1>Excel-Datei per Auswahl laden</h1>
-    <p>Wähle eine Excel-Datei (z. B. von deinem Netzlaufwerk) aus:</p>
-    <input type="file" id="fileInput" accept=".xlsx,.xls" />
-    <div id="output" class="table-wrap"></div>
-  </main>
- </div> 
+  <div class="page-background">
+    <main class="container">
+      <h1>Excel-Datei per Auswahl laden</h1>
+      <p>Wähle oben im Header eine Excel-Datei aus.</p>
+      <div id="output" class="table-wrap"></div>
+    </main>
+  </div>
 
   <script src="xlsx.full.min.js"></script>
   <script>
-    document.getElementById('fileInput').addEventListener('change', function (event) {
+    const fileInput   = document.getElementById('fileInput');
+    const fileNameEl  = document.getElementById('fileName');
+    const outputEl    = document.getElementById('output');
+
+    fileInput.addEventListener('change', function (event) {
       const file = event.target.files[0];
-      if (!file) return;
+      if (!file) { fileNameEl.textContent = ''; return; }
+
+      fileNameEl.textContent = file.name;
 
       const reader = new FileReader();
       reader.onload = function (e) {
@@ -38,13 +51,14 @@
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         const html = XLSX.utils.sheet_to_html(worksheet);
-        document.getElementById('output').innerHTML = html;
+        outputEl.innerHTML = html;
       };
       reader.readAsArrayBuffer(file);
     });
   </script>
 </body>
 </html>
+
 
 
 
