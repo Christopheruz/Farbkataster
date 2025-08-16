@@ -1,28 +1,21 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <title>Excel lokal laden per Dateiauswahl</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
-<body>
-  <header class="site-header">
-    <nav class="navbar">
-      <div class="links">
-        <a href="#">Start</a>
-        <a href="#" aria-current="page">Excel laden</a>
-        <a href="#">Kontakt</a>
-      </div>
+<header class="site-header">
+  <nav class="navbar">
+    <!-- Upload zuerst (links) -->
+    <div class="header-actions">
+      <input type="file" id="fileInput" accept=".xlsx,.xls" class="visually-hidden" />
+      <label for="fileInput" class="btn">Excel-Datei auswählen</label>
+      <span id="fileName" class="file-name" aria-live="polite"></span>
+    </div>
 
-      <!-- Upload im Header -->
-      <div class="header-actions">
-        <input type="file" id="fileInput" accept=".xlsx,.xls" class="visually-hidden" />
-        <label for="fileInput" class="btn">Excel-Datei auswählen</label>
-        <span id="fileName" class="file-name" aria-live="polite"></span>
-      </div>
-    </nav>
-  </header>
+    <!-- Links danach (rückt nach rechts) -->
+    <div class="links">
+      <a href="#">Start</a>
+      <a href="#" aria-current="page">Excel laden</a>
+      <a href="#">Kontakt</a>
+    </div>
+  </nav>
+</header>
+
 
   <div class="page-background">
     <main class="container">
