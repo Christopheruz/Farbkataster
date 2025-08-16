@@ -4,30 +4,36 @@
   <meta charset="UTF-8" />
   <title>Excel lokal laden per Dateiauswahl</title>
   <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
-  <!-- Header -->
-  <header>
+  <!-- Header (scrollt normal mit) -->
+  <header class="site-header">
     <nav class="navbar">
-      <a href="#">Start</a>
-      <a href="#">Excel laden</a>
-      <a href="#">Kontakt</a>
+      <a class="brand" href="#">Farbarchiv</a>
+      <div class="links">
+        <a href="#">Start</a>
+        <a href="#" aria-current="page">Excel laden</a>
+        <a href="#">Kontakt</a>
+      </div>
     </nav>
   </header>
 
-  <h1>Excel-Datei per Auswahl laden</h1>
-  <p>Wähle eine Excel-Datei (z. B. von deinem Netzlaufwerk) aus:</p>
-  <input type="file" id="fileInput" accept=".xlsx,.xls" />
-  <div id="output"></div>
+  <main class="container">
+    <h1>Excel-Datei per Auswahl laden</h1>
+    <p>Wähle eine Excel-Datei (z. B. von deinem Netzlaufwerk) aus:</p>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" />
+    <div id="output" class="table-wrap"></div>
+  </main>
 
   <script src="xlsx.full.min.js"></script>
   <script>
-    document.getElementById('fileInput').addEventListener('change', function(event) {
+    document.getElementById('fileInput').addEventListener('change', function (event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
         const firstSheetName = workbook.SheetNames[0];
@@ -40,6 +46,7 @@
   </script>
 </body>
 </html>
+
 
 
 
