@@ -112,5 +112,67 @@ th { background-color: #f2f2f2; }
   .page-background { padding: 20px; }
 }
 
+/* Layout: Sidebar links, Tabelle rechts */
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  flex: 0 0 260px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  position: sticky;   /* bleibt beim Scrollen sichtbar */
+  top: 16px;
+}
+.sidebar-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.filter-group { margin-bottom: 12px; }
+.filter-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.filter-group input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.btn.btn-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: #222;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn.btn-clear:hover { background: #f3f3f3; }
+.hint { font-size: 12px; opacity: .8; margin-top: 10px; }
+
+/* Hauptbereich rechts */
+.main { flex: 1 1 auto; min-width: 0; }
+.table-wrap { overflow-x: auto; }
+
+/* Responsive: unter 900px untereinander stapeln */
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; position: static; }
+}
+
+
 
 
