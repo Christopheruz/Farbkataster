@@ -1,62 +1,89 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <title>Excel lokal laden per Dateiauswahl</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
-<body>
-  <header class="site-header">
-    <nav class="navbar">
-      <div class="links">
-        <a href="#">Start</a>
-        <a href="#" aria-current="page">Excel laden</a>
-        <a href="#">Kontakt</a>
-      </div>
+/* Grundlayout */
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Arial, sans-serif; color: #111; }
 
-      <!-- Upload im Header -->
-      <div class="header-actions">
-        <input type="file" id="fileInput" accept=".xlsx,.xls" class="visually-hidden" />
-        <label for="fileInput" class="btn">Excel-Datei auswählen</label>
-        <span id="fileName" class="file-name" aria-live="polite"></span>
-      </div>
-    </nav>
-  </header>
+/* Header */
+.site-header {
+  background: #222;
+  color: #fff;
+  min-height: 96px;            /* Höhe des Headers */
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.navbar {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.links a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 16px;
+  font-weight: 700;
+}
+.links a[aria-current="page"] { text-decoration: underline; }
+.links a:hover { text-decoration: underline; }
 
-  <div class="page-background">
-    <main class="container">
-      <h1>Excel-Datei per Auswahl laden</h1>
-      <p>Wähle oben im Header eine Excel-Datei aus.</p>
-      <div id="output" class="table-wrap"></div>
-    </main>
-  </div>
+/* Upload im Header */
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+.btn {
+  background: #fff;
+  color: #222;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn:hover { background: #f3f3f3; }
+.btn:focus-visible { outline: 2px solid #8ab4f8; outline-offset: 2px; }
+.file-name {
+  color: #fff;
+  opacity: .9;
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  <script src="xlsx.full.min.js"></script>
-  <script>
-    const fileInput   = document.getElementById('fileInput');
-    const fileNameEl  = document.getElementById('fileName');
-    const outputEl    = document.getElementById('output');
+/* Hintergrundbild erst unterhalb des Headers */
+.page-background {
+  background: white url('farblogo.png') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  padding: 40px;               /* früherer body-Margin */
+}
 
-    fileInput.addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) { fileNameEl.textContent = ''; return; }
+/* Inhalt & Tabelle */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.85);
+  border-radius: 12px;
+  padding: 24px;
+}
+.table-wrap { overflow-x: auto; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: rgba(255,255,255,0.95);
+  color: #000;
+}
+th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+th { background-color: #f2f2f2; }
 
-      fileNameEl.textContent = file.name;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const html = XLSX.utils.sheet_to_html(worksheet);
-        outputEl.innerHTML = html;
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  </script>
-</body>
-</html>
 
 
