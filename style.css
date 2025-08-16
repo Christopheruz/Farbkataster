@@ -9,26 +9,29 @@ body {
 /* Header (scrollt normal mit) */
 .site-header {
   background: #222;
-  min-height: 96px;
-  display: flex;
-  align-items: center; 
   color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  min-height: 120px;              /* → Höhe hier anpassen (z.B. 72 / 96 / 120) */
+  display: flex;
+  align-items: center;           /* vertikal zentrieren */
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);  /* optional: leichte Trennung */
 }
+
 .site-header nav {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 12px 20px;
+  padding: 0 24px;               /* nur horizontal, Höhe kommt von min-height */
+  width: 100%;
+  display: flex;
+  gap: 16px;
 }
+
 .site-header a {
   color: #fff;
   margin-right: 16px;
   text-decoration: none;
   font-weight: bold;
 }
-.site-header a:hover {
-  text-decoration: underline;
-}
+.site-header a:hover { text-decoration: underline; }
 
 /* Hintergrundbild nur unterhalb des Headers */
 .page-background {
