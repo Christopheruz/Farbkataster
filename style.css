@@ -6,7 +6,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
 .site-header {
   background: #357593;
   color: #fff;
-  min-height: 96px;            /* Höhe des Headers */
+  min-height: 96px;                 /* Höhe des Headers */
   display: flex;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0,0,0,.08);
@@ -19,28 +19,16 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;                  /* bricht sauber auf kleinen Screens */
 }
 
-/* Links ganz nach rechts schieben */
-.links {
-  margin-left: auto;
+/* Upload im Header (links) */
+.header-actions {
   display: flex;
-  gap: 16px;
+  align-items: center;
+  gap: 10px;
+  order: 0;
 }
-
-/* (Optional) Dateiname flexibel begrenzen */
-.file-name {
-  max-width: clamp(120px, 25vw, 320px);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.links a[aria-current="page"] { text-decoration: underline; }
-.links a:hover { text-decoration: underline; }
-
-/* Upload im Header */
-.header-actions { display: flex; align-items: center; gap: 10px; }
 .visually-hidden {
   position: absolute !important;
   width: 1px; height: 1px;
@@ -49,6 +37,9 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   white-space: nowrap; border: 0;
 }
 .btn {
+  display: inline-flex;             /* schöneres Inline-Layout */
+  align-items: center;
+  gap: 8px;
   background: #fff;
   color: #222;
   border: 1px solid rgba(255,255,255,.3);
@@ -59,13 +50,32 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
 }
 .btn:hover { background: #f3f3f3; }
 .btn:focus-visible { outline: 2px solid #8ab4f8; outline-offset: 2px; }
+
+/* Dateiname (vereinheitlicht) */
 .file-name {
   color: #fff;
   opacity: .9;
-  max-width: 320px;
+  max-width: clamp(120px, 25vw, 320px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Links ganz nach rechts schieben */
+.links {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.links a {
+  color: #fff;                      /* Basisfarbe ergänzt */
+  text-decoration: none;
+  font-weight: 700;
+}
+.links a:hover,
+.links a[aria-current="page"] {
+  text-decoration: underline;
 }
 
 /* Hintergrundbild erst unterhalb des Headers */
@@ -73,7 +83,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   background: white url('farblogo.png') no-repeat center center fixed;
   background-size: cover;
   min-height: 100vh;
-  padding: 40px;               /* früherer body-Margin */
+  padding: 40px;                    /* früherer body-Margin */
 }
 
 /* Inhalt & Tabelle */
@@ -93,6 +103,14 @@ table {
 }
 th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
 th { background-color: #f2f2f2; }
+
+/* Responsive Tweaks */
+@media (max-width: 720px) {
+  .site-header { min-height: 80px; }
+  .navbar { gap: 12px; }
+  .links { margin-left: 0; width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+  .page-background { padding: 20px; }
+}
 
 
 
