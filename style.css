@@ -22,7 +22,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   flex-wrap: wrap;                  /* bricht sauber auf kleinen Screens */
 }
 
-/* Upload im Header (links) */
+/* Upload im Header (links) */  
 .header-actions {
   display: flex;
   align-items: center;
