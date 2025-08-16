@@ -1,37 +1,49 @@
+/* Grundlayout */
+* { box-sizing: border-box; }
 body {
+  margin: 0;                  /* wichtig: kein Body-Margin */
   font-family: Arial, sans-serif;
-  margin: 0; /* Abstand raus, damit Header oben sauber sitzt */
+  color: #111;
 }
 
-/* Header */
+/* Header (scrollt normal mit) */
 .site-header {
   background: #222;
   color: #fff;
+}
+.site-header nav {
+  max-width: 1100px;
+  margin: 0 auto;
   padding: 12px 20px;
 }
-
 .site-header a {
   color: #fff;
   margin-right: 16px;
   text-decoration: none;
   font-weight: bold;
 }
-
 .site-header a:hover {
   text-decoration: underline;
 }
 
-/* Container mit Hintergrundbild */
+/* Hintergrundbild nur unterhalb des Headers */
 .page-background {
   background: white url('farblogo.png') no-repeat center center fixed;
   background-size: cover;
   min-height: 100vh;
-  padding: 40px; /* dein alter margin vom body */
+  padding: 40px;              /* entspricht deinem früheren body-margin */
 }
 
-h1 {
-  color: #333;
+/* Inhalt */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.85); /* leichte Lesbarkeitsfläche */
+  border-radius: 12px;
+  padding: 24px;
 }
+
+h1 { color: #333; margin-top: 0; }
 
 #searchInput {
   margin-bottom: 20px;
@@ -40,21 +52,19 @@ h1 {
   font-size: 16px;
 }
 
+/* Tabelle */
+.table-wrap { overflow-x: auto; }
 table {
   border-collapse: collapse;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.85); /* Lesbarkeit auf Bild */
+  background-color: rgba(255, 255, 255, 0.95);
   color: #000;
 }
-
 th, td {
   border: 1px solid #ccc;
   padding: 10px;
   text-align: left;
 }
-
-th {
-  background-color: #f2f2f2;
-}
+th { background-color: #f2f2f2; }
 
 
