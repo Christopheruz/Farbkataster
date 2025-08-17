@@ -256,7 +256,7 @@
     const r = (addRaum.value || '').trim();
     const f = (addFarb.value || '').trim();
     const p = (addProd.value || '').trim();
-    if (!g && !r && !f && !p) { addGeb.focus(); return; }
+    if (!g && !r && !f && !p) { addGebSel.focus(); return; }
 
     ensureHeaders();
     findHeaderIndexesFromAoa();
