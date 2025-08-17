@@ -282,6 +282,20 @@ th { background-color: #f2f2f2; }
 .container {
   background: transparent !important;
 }
+/* Roter Rahmen nur um den "Excel speichern"-Button */
+#saveExcel {
+  border: 2px solid #e53935 !important; /* Rot */
+  border-radius: 8px;                   /* wie vorher */
+}
+
+/* Optional: kleines Hover-/Focus-Feedback */
+#saveExcel:hover {
+  box-shadow: 0 0 0 3px rgba(229,57,53,.15);
+}
+#saveExcel:focus-visible {
+  outline: 2px solid #e53935;
+  outline-offset: 2px;
+}
 
 
 
