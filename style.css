@@ -122,6 +122,8 @@ th { background-color: #f2f2f2; }
 /* Sidebar */
 .sidebar {
   width: 260px;
+  max-height: calc(100vh - 32px);
+  overflow: auto;
   flex: 0 0 260px;
   background: rgba(255,255,255,0.9);
   border-radius: 12px;
@@ -165,7 +167,7 @@ th { background-color: #f2f2f2; }
 
 /* Hauptbereich rechts */
 .main { flex: 1 1 auto; min-width: 0; }
-.table-wrap { overflow-x: auto; }
+
 
 /* Responsive: unter 900px untereinander stapeln */
 @media (max-width: 900px) {
@@ -176,7 +178,7 @@ th { background-color: #f2f2f2; }
 /* Eingabezeile über der Tabelle */
 .entry-bar {
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   gap: 16px;
   margin-bottom: 12px;
   flex-wrap: wrap;                 /* bricht sauber auf kleineren Screens */
