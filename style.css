@@ -230,6 +230,7 @@ th { background-color: #f2f2f2; }
   display: grid;
   grid-template-columns: repeat(4, minmax(160px, 1fr));
   gap: 12px;
+  min-width: 0;
   flex: 1 1 auto;
 }
 
