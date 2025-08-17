@@ -52,8 +52,37 @@
 
     <!-- Tabelle (rechts) -->
     <section class="main">
-      <div id="output" class="table-wrap"></div>
-    </section>
+  <!-- Eingabezeile oberhalb der Tabelle -->
+  <div class="entry-bar">
+    <div class="entry-fields">
+      <div class="field">
+        <label for="addGeb">Gebäude</label>
+        <input type="text" id="addGeb" placeholder="z. B. ZOM, A1 …">
+      </div>
+      <div class="field">
+        <label for="addRaum">Raumnr.</label>
+        <input type="text" id="addRaum" placeholder="z. B. 2.14, 405 …">
+      </div>
+      <div class="field">
+        <label for="addFarb">Farbton</label>
+        <input type="text" id="addFarb" placeholder="z. B. RAL 9010 …">
+      </div>
+      <div class="field">
+        <label for="addProd">Produkt</label>
+        <input type="text" id="addProd" placeholder="z. B. Hersteller/Serie …">
+      </div>
+    </div>
+
+    <div class="entry-actions">
+      <button type="button" id="addRow" class="btn btn-primary">+ Zeile</button>
+      <button type="button" id="saveExcel" class="btn btn-save">Excel speichern</button>
+    </div>
+  </div>
+
+  <!-- Tabelle -->
+  <div id="output" class="table-wrap"></div>
+</section>
+
   </div>
 </main>
 
