@@ -94,50 +94,98 @@
   const fileNameEl = document.getElementById('fileName');
   const outputEl   = document.getElementById('output');
 
-  // Filter-Inputs
-  const inpGeb   = document.getElementById('filterGebaeude');
-  const inpRaum  = document.getElementById('filterRaum');
-  const btnClear = document.getElementById('clearFilters');
+  // Filter aus der Sidebar (falls vorhanden)
+  const inpGebFilter  = document.getElementById('filterGebaeude');
+  const inpRaumFilter = document.getElementById('filterRaum');
+  const btnClear      = document.getElementById('clearFilters');
 
+  // Neue Eingabefelder (oberhalb der Tabelle)
+  const addGeb  = document.getElementById('addGeb');
+  const addRaum = document.getElementById('addRaum');
+  const addFarb = document.getElementById('addFarb');
+  const addProd = document.getElementById('addProd');
+  const btnAdd  = document.getElementById('addRow');
+  const btnSave = document.getElementById('saveExcel');
+
+  // Arbeitszustand
+  let wb = null, ws = null, sheetName = null;
+  let aoa = [];                         // Array-of-Arrays
   let tableEl = null;
-  let colIdx = { geb: null, raum: null };
+  let originalFileName = 'Tabelle.xlsx';
 
+  // Spaltenindex
+  let colIdx = { geb: null, raum: null, farb: null, prod: null };
+
+  // ---------- Utils
   function normalizeHeader(text) {
     return String(text || '')
       .toLowerCase()
       .replace(/\s+/g, '')
       .replace(/[.\-]/g, '')
-      .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue');
+      .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue');
   }
 
-  function findHeaderIndexes() {
-    tableEl = outputEl.querySelector('table');
-    colIdx = { geb: null, raum: null };
-    if (!tableEl) return;
+  function ensureHeaders() {
+    if (!Array.isArray(aoa) || aoa.length === 0) {
+      aoa = [['Gebäude','Raumnr.','Farbton','Produkt']];
+      return;
+    }
+    if (!Array.isArray(aoa[0])) aoa[0] = Array.from(aoa[0]);
 
-    const headerRow = tableEl.tHead?.rows?.[0] || tableEl.rows?.[0];
-    if (!headerRow) return;
+    const headersNorm = aoa[0].map(h => normalizeHeader(h));
+    const pushIfMissing = (label, ...needles) => {
+      const exists = headersNorm.some(h => needles.some(n => h.includes(n)));
+      if (!exists) aoa[0].push(label);
+    };
+    pushIfMissing('Gebäude', 'gebaeude');
+    pushIfMissing('Raumnr.', 'raumnr','raumnummer','raum');
+    pushIfMissing('Farbton', 'farbton','farb','farbcode','farbnummer','farbtonnr');
+    pushIfMissing('Produkt', 'produkt','artikel','produktname','artikelnummer');
+  }
 
-    const headers = Array.from(headerRow.cells).map(th => normalizeHeader(th.textContent));
-
-    const candGeb  = ['gebaeude','gebaeudenr','gebaeudenummer','gebaeudeid','gebaeudename','gebaeudebereich','gebaeudekuerzel'];
-    const candRaum = ['raumnr','raumnummer','raum','raumid','raumcode','raumbez'];
-
-    function indexOfAny(cands) {
-      for (let i = 0; i < headers.length; i++) {
-        const h = headers[i];
-        for (const c of cands) { if (h.includes(c)) return i; }
+  function findHeaderIndexesFromAoa() {
+    const H = aoa[0].map(h => normalizeHeader(h));
+    const findIdx = (cands) => {
+      for (let i=0;i<H.length;i++) {
+        for (const c of cands) if (H[i].includes(c)) return i;
       }
       return null;
-    }
+    };
+    colIdx.geb  = findIdx(['gebaeude']);
+    colIdx.raum = findIdx(['raumnr','raumnummer','raum']);
+    colIdx.farb = findIdx(['farbton','farb','farbcode','farbnummer','farbtonnr']);
+    colIdx.prod = findIdx(['produkt','artikel','produktname','artikelnummer']);
+  }
 
-    colIdx.geb  = indexOfAny(candGeb);
-    colIdx.raum = indexOfAny(candRaum);
+  // ---------- Rendern
+  function renderAndSetup() {
+    ws = XLSX.utils.aoa_to_sheet(aoa);
+    wb.Sheets[sheetName] = ws;
+    const html = XLSX.utils.sheet_to_html(ws, { header: "", footer: "" });
+    outputEl.innerHTML = html;
+    tableEl = outputEl.querySelector('table');
+    setupFiltering();
+  }
+
+  // ---------- Filtern (nur Gebäude/Raum – wie zuvor)
+  function findHeaderIndexesForFilter() {
+    if (!tableEl) { colIdx.geb = colIdx.geb ?? null; colIdx.raum = colIdx.raum ?? null; return; }
+    const headerRow = tableEl.tHead?.rows?.[0] || tableEl.rows?.[0];
+    if (!headerRow) return;
+    const headers = Array.from(headerRow.cells).map(th => normalizeHeader(th.textContent));
+
+    const idxOfAny = (cands) => {
+      for (let i=0;i<headers.length;i++) {
+        for (const c of cands) if (headers[i].includes(c)) return i;
+      }
+      return null;
+    };
+    colIdx.geb  ??= idxOfAny(['gebaeude']);
+    colIdx.raum ??= idxOfAny(['raumnr','raumnummer','raum']);
   }
 
   function getDataRows() {
     if (!tableEl) return [];
-    // Wenn <tbody> existiert, nimm dessen Zeilen; sonst alle außer erster (Header)
     if (tableEl.tBodies && tableEl.tBodies.length && tableEl.tBodies[0].rows.length) {
       return Array.from(tableEl.tBodies[0].rows);
     }
@@ -146,56 +194,81 @@
 
   function applyFilters() {
     if (!tableEl) return;
-
-    const fGeb  = (inpGeb.value  || '').toLowerCase().trim();
-    const fRaum = (inpRaum.value || '').toLowerCase().trim();
+    const fGeb  = (inpGebFilter?.value  || '').toLowerCase().trim();
+    const fRaum = (inpRaumFilter?.value || '').toLowerCase().trim();
 
     const rows = getDataRows();
     for (const row of rows) {
       if (!row || row.cells.length === 0) continue;
-
-      const passesGeb = !fGeb  || colIdx.geb  == null || (row.cells[colIdx.geb]  && row.cells[colIdx.geb].textContent.toLowerCase().includes(fGeb));
-      const passesRau = !fRaum || colIdx.raum == null || (row.cells[colIdx.raum] && row.cells[colIdx.raum].textContent.toLowerCase().includes(fRaum));
-
-      row.style.display = (passesGeb && passesRau) ? '' : 'none';
+      const okGeb  = !fGeb  || colIdx.geb  == null || (row.cells[colIdx.geb]  && row.cells[colIdx.geb].textContent.toLowerCase().includes(fGeb));
+      const okRaum = !fRaum || colIdx.raum == null || (row.cells[colIdx.raum] && row.cells[colIdx.raum].textContent.toLowerCase().includes(fRaum));
+      row.style.display = (okGeb && okRaum) ? '' : 'none';
     }
   }
 
-  function setupFiltering() {
-    findHeaderIndexes();
-    applyFilters();
-  }
+  function setupFiltering() { findHeaderIndexesForFilter(); applyFilters(); }
 
-  // Datei laden + Tabelle rendern
+  // ---------- Datei laden
   fileInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file) { if (fileNameEl) fileNameEl.textContent = ''; return; }
-
-    if (fileNameEl) fileNameEl.textContent = file.name;
+    originalFileName = file.name;
+    if (fileNameEl) fileNameEl.textContent = originalFileName;
 
     const reader = new FileReader();
-    reader.onload = function (e) {
+    reader.onload = function(e) {
       const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-      const html = XLSX.utils.sheet_to_html(worksheet);
-      outputEl.innerHTML = html;
+      wb = XLSX.read(data, { type: 'array' });
+      sheetName = wb.SheetNames[0] || 'Tabelle1';
+      ws = wb.Sheets[sheetName];
 
-      // Nach dem Rendern Filter initialisieren
-      setupFiltering();
+      aoa = XLSX.utils.sheet_to_json(ws, { header: 1 }) || [];
+      ensureHeaders();
+      findHeaderIndexesFromAoa();
+      renderAndSetup();
     };
     reader.readAsArrayBuffer(file);
   });
 
-  // Live-Filter beim Tippen + Zurücksetzen
-  inpGeb?.addEventListener('input', applyFilters);
-  inpRaum?.addEventListener('input', applyFilters);
-  btnClear?.addEventListener('click', () => {
-    inpGeb.value = '';
-    inpRaum.value = '';
-    applyFilters();
+  // ---------- Zeile hinzufügen aus 4 Feldern
+  btnAdd?.addEventListener('click', () => {
+    if (!wb || !aoa.length) { alert('Bitte zuerst eine Excel-Datei laden.'); return; }
+
+    const g = (addGeb.value  || '').trim();
+    const r = (addRaum.value || '').trim();
+    const f = (addFarb.value || '').trim();
+    const p = (addProd.value || '').trim();
+    if (!g && !r && !f && !p) { addGeb.focus(); return; }
+
+    ensureHeaders();
+    findHeaderIndexesFromAoa();
+
+    const cols = aoa[0].length;
+    const row = new Array(cols).fill('');
+    if (colIdx.geb  != null) row[colIdx.geb]  = g;
+    if (colIdx.raum != null) row[colIdx.raum] = r;
+    if (colIdx.farb != null) row[colIdx.farb] = f;
+    if (colIdx.prod != null) row[colIdx.prod] = p;
+
+    aoa.push(row);
+
+    // Felder leeren
+    addGeb.value = ''; addRaum.value = ''; addFarb.value = ''; addProd.value = '';
+
+    renderAndSetup();
   });
+
+  // ---------- Excel speichern
+  btnSave?.addEventListener('click', () => {
+    if (!wb) { alert('Keine Daten zum Speichern. Bitte zuerst eine Excel-Datei laden.'); return; }
+    const fn = originalFileName.replace(/(\.xlsx?|\.xlsm)$/i, '-bearbeitet$1');
+    XLSX.writeFile(wb, fn === originalFileName ? (originalFileName + '-bearbeitet.xlsx') : fn);
+  });
+
+  // Live-Filter (Sidebar)
+  inpGebFilter?.addEventListener('input', applyFilters);
+  inpRaumFilter?.addEventListener('input', applyFilters);
+  btnClear?.addEventListener('click', () => { if (inpGebFilter) inpGebFilter.value=''; if (inpRaumFilter) inpRaumFilter.value=''; applyFilters(); });
 </script>
 
 </body>
