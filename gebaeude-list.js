@@ -1,3 +1,4 @@
+window.GEBAEUDE_LIST = [
 1014 Parkhaus - Zahnklinik
 1280 Kinder- und Jugendpsychiatrie
 1300 Trafostation - Schmeddingstraße
@@ -151,4 +152,5 @@
 9920 UKM Marienhospital Steinfurt GmbH -Emsdetten-
 9000 Versorgungskanäle UKM
 9805 Franziskus Carrée Haus B - Anmietung
+];
 
