@@ -56,10 +56,12 @@
   <div class="entry-bar">
     <div class="entry-fields">
       <div class="field">
-        <label for="addGeb">Gebäude</label>
-        <input type="text" id="addGeb" placeholder="z. B. ZOM, A1 …">
-      </div>
-      <div class="field">
+       <label for="addGebSel">Gebäude</label>
+        <select id="addGebSel">
+         <option value="">– bitte wählen –</option>
+        </select>
+       </div>
+     <div class="field">
         <label for="addRaum">Raumnr.</label>
         <input type="text" id="addRaum" placeholder="z. B. 2.14, 405 …">
       </div>
@@ -87,7 +89,8 @@
 </main>
 
   </div>
-
+  
+  <script src="gebaeude-list.js"></script>
   <script src="xlsx.full.min.js"></script>
 <script>
   const fileInput  = document.getElementById('fileInput');
@@ -100,7 +103,7 @@
   const btnClear      = document.getElementById('clearFilters');
 
   // Neue Eingabefelder (oberhalb der Tabelle)
-  const addGeb  = document.getElementById('addGeb');
+  const addGebSel = document.getElementById('addGebSel');
   const addRaum = document.getElementById('addRaum');
   const addFarb = document.getElementById('addFarb');
   const addProd = document.getElementById('addProd');
@@ -124,6 +127,21 @@
       .replace(/[.\-]/g, '')
       .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue');
   }
+
+  function fillGebaeudeSelect(list) {
+    const arr = (Array.isArray(list) ? list : []).map(s => String(s||'').trim()).filter(Boolean)
+                  .sort((a,b) => a.localeCompare(b, 'de'));
+    addGebSel.innerHTML = '<option value="">– bitte wählen –</option>';
+    for (const name of arr) {
+      const opt = document.createElement('option');
+      opt.value = name; opt.textContent = name;
+      addGebSel.appendChild(opt);
+    }
+  }
+  // Beim Laden der Seite füllen (offline: aus window.GEBAEUDE_LIST)
+  document.addEventListener('DOMContentLoaded', () => {
+    fillGebaeudeSelect(window.GEBAEUDE_LIST || []);
+  });
 
   function ensureHeaders() {
     if (!Array.isArray(aoa) || aoa.length === 0) {
@@ -234,7 +252,7 @@
   btnAdd?.addEventListener('click', () => {
     if (!wb || !aoa.length) { alert('Bitte zuerst eine Excel-Datei laden.'); return; }
 
-    const g = (addGeb.value  || '').trim();
+    const g = (addGebSel.value || '').trim();
     const r = (addRaum.value || '').trim();
     const f = (addFarb.value || '').trim();
     const p = (addProd.value || '').trim();
@@ -253,7 +271,7 @@
     aoa.push(row);
 
     // Felder leeren
-    addGeb.value = ''; addRaum.value = ''; addFarb.value = ''; addProd.value = '';
+    addGebSel.value = ''; addRaum.value = ''; addFarb.value = ''; addProd.value = '';
 
     renderAndSetup();
   });
