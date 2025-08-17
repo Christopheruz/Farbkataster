@@ -30,6 +30,7 @@
     <main class="container">
   <h1>Excel-Datei per Auswahl laden</h1>
   <p>Wähle oben im Header eine Excel-Datei aus.</p>
+  <p>Alle Angaben sind ohne Gewähr und vor Ort zu prüfen.</p>   
 
   <div class="layout">
     <!-- Sidebar (links) -->
@@ -42,12 +43,12 @@
 
       <div class="filter-group">
         <label for="filterGebaeude">Gebäude</label>
-        <input type="text" id="filterGebaeude" placeholder="z. B. ZOM, UKM A1 …">
+        <input type="text" id="filterGebaeude" placeholder="z. B. 3800, Parkhaus …">
       </div>
 
       <div class="filter-group">
         <label for="filterRaum">Raumnr.</label>
-        <input type="text" id="filterRaum" placeholder="z. B. 2.14, 405 …">
+        <input type="text" id="filterRaum" placeholder="z. B. E 05, 090.110, Flur …">
       </div>
 
       <button type="button" id="clearFilters" class="btn btn-clear">Filter zurücksetzen</button>
@@ -68,7 +69,7 @@
        </div>
      <div class="field">
         <label for="addRaum">Raumnr.</label>
-        <input type="text" id="addRaum" placeholder="z. B. 2.14, 405 …">
+        <input type="text" id="addRaum" placeholder="z. B. E 05, 090.110, Flur …">
       </div>
       <div class="field">
         <label for="addFarb">Farbton</label>
@@ -76,12 +77,12 @@
       </div>
       <div class="field">
         <label for="addProd">Produkt</label>
-        <input type="text" id="addProd" placeholder="z. B. Hersteller/Serie …">
+        <input type="text" id="addProd" placeholder="z. B. Hersteller …">
       </div>
     </div>
 
     <div class="entry-actions">
-      <button type="button" id="addRow" class="btn btn-primary">+ Zeile</button>
+      <button type="button" id="addRow" class="btn btn-primary">Einträge hinzufügen</button>
       <button type="button" id="saveExcel" class="btn btn-save">Excel speichern</button>
      </div>
    </div>
