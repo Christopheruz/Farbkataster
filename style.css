@@ -84,7 +84,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-position: center 120px;
+  background-position: center 100px;
   min-height: 100vh;
   padding: 40px;                    /* früherer body-Margin */
 }
