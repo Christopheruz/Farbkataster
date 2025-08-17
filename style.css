@@ -80,9 +80,11 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
 
 /* Hintergrundbild erst unterhalb des Headers */
 .page-background {
-  background: white url('farblogo.png') no-repeat center center fixed;
+  background: white url('farblogo.png');
   background-size: cover;
-  margin-top: 30px;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center 120px;
   min-height: 100vh;
   padding: 40px;                    /* früherer body-Margin */
 }
