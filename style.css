@@ -135,6 +135,23 @@ th { background-color: #f2f2f2; }
   position: sticky;   /* bleibt beim Scrollen sichtbar */
   top: 16px;
 }
+
+.sidebar-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;        /* Abstand zur Überschrift */
+  text-decoration: none;      /* Link ohne Unterstreichung */
+}
+
+.sidebar-logo img {
+  max-width: 160px;           /* Logo-Breite anpassen */
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  image-rendering: auto;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.05)); /* dezenter Lift */
+}
 .sidebar-title {
   margin: 0 0 8px;
   font-size: 18px;
