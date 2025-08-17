@@ -278,6 +278,11 @@ th { background-color: #f2f2f2; }
   .entry-fields { grid-template-columns: 1fr; }
   .entry-actions { width: 100%; justify-content: flex-end; }
 }
+/* Halbtransparenten Hintergrund der großen Fläche entfernen */
+.container {
+  background: transparent !important;
+}
+
 
 
 
