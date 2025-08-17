@@ -36,7 +36,7 @@
     <!-- Sidebar (links) -->
     <aside class="sidebar">
 
-      <div class="sidebar-logo" href="#" aria-label="Startseite">
+      <div class="sidebar-logo">
     <img src="colibrilogo.png" alt="Farbarchiv Logo">
   </div>
       <h2 class="sidebar-title">Filter</h2>
@@ -60,7 +60,7 @@
   <!-- Eingabezeile oberhalb der Tabelle -->
   <div class="entry-sticky">    
   <div class="entry-bar">
-    <div id="entryError" class="form-error" role="alert" aria-live="polite"></div>
+    
     <div class="entry-fields">
       <div class="field">
        <label for="addGebSel">Gebäude</label>
@@ -80,6 +80,7 @@
         <label for="addProd">Produkt</label>
         <input type="text" id="addProd" placeholder="z. B. Hersteller …">
       </div>
+      <div id="entryError" class="form-error" role="alert" aria-live="polite"></div>
     </div>
 
     <div class="entry-actions">
@@ -257,32 +258,71 @@
   });
 
   // ---------- Zeile hinzufügen aus 4 Feldern
+  const entryError = document.getElementById('entryError');
+  
   btnAdd?.addEventListener('click', () => {
-    if (!wb || !aoa.length) { alert('Bitte zuerst eine Excel-Datei laden.'); return; }
+  if (!wb || !aoa.length) { alert('Bitte zuerst eine Excel-Datei laden.'); return; }
 
-    const g = (addGebSel.value || '').trim();
-    const r = (addRaum.value || '').trim();
-    const f = (addFarb.value || '').trim();
-    const p = (addProd.value || '').trim();
-    if (!g && !r && !f && !p) { addGebSel.focus(); return; }
+  const g = (addGebSel.value || '').trim();
+  const r = (addRaum.value   || '').trim();
+  const f = (addFarb.value   || '').trim();
+  const p = (addProd.value   || '').trim();
 
-    ensureHeaders();
-    findHeaderIndexesFromAoa();
+  // Validierung: alle müssen vorhanden sein
+  const missing = [];
+  if (!g) missing.push(addGebSel);
+  if (!r) missing.push(addRaum);
+  if (!f) missing.push(addFarb);
+  if (!p) missing.push(addProd);
 
-    const cols = aoa[0].length;
-    const row = new Array(cols).fill('');
-    if (colIdx.geb  != null) row[colIdx.geb]  = g;
-    if (colIdx.raum != null) row[colIdx.raum] = r;
-    if (colIdx.farb != null) row[colIdx.farb] = f;
-    if (colIdx.prod != null) row[colIdx.prod] = p;
-
-    aoa.push(row);
-
-    // Felder leeren
-    addGebSel.value = ''; addRaum.value = ''; addFarb.value = ''; addProd.value = '';
-
-    renderAndSetup();
+  // Markieren + Meldung
+  [addGebSel, addRaum, addFarb, addProd].forEach(el => {
+    const empty = !(el.value || '').trim();
+    el.classList.toggle('invalid', empty);
   });
+
+  if (missing.length) {
+    entryError.textContent = 'Bitte alle Felder ausfüllen.';
+    missing[0].focus();
+    return;
+  } else {
+    entryError.textContent = '';
+  }
+
+  ensureHeaders();
+  findHeaderIndexesFromAoa();
+
+  const cols = aoa[0].length;
+  const row = new Array(cols).fill('');
+  if (colIdx.geb  != null) row[colIdx.geb]  = g;
+  if (colIdx.raum != null) row[colIdx.raum] = r;
+  if (colIdx.farb != null) row[colIdx.farb] = f;
+  if (colIdx.prod != null) row[colIdx.prod] = p;
+
+  aoa.push(row);
+
+  // Felder leeren
+  addGebSel.value = '';
+  addRaum.value = '';
+  addFarb.value = '';
+  addProd.value = '';
+
+  renderAndSetup();
+});
+
+// Invalid-Markierung live entfernen
+addGebSel?.addEventListener('change', () => {
+  if ((addGebSel.value || '').trim()) addGebSel.classList.remove('invalid');
+  if ([addGebSel, addRaum, addFarb, addProd].every(el => (el.value || '').trim()))
+    entryError.textContent = '';
+});
+[addRaum, addFarb, addProd].forEach(el => {
+  el?.addEventListener('input', () => {
+    if ((el.value || '').trim()) el.classList.remove('invalid');
+    if ([addGebSel, addRaum, addFarb, addProd].every(x => (x.value || '').trim()))
+      entryError.textContent = '';
+  });
+});
 
   // ---------- Excel speichern
   btnSave?.addEventListener('click', () => {
