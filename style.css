@@ -89,6 +89,28 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   padding: 40px;                    /* früherer body-Margin */
 }
 
+/* Sticky-Container für die Eingabefelder (wie Sidebar) */
+.entry-sticky {
+  position: sticky;
+  top: 16px;            /* Abstand zum oberen Viewport, wie .sidebar */
+  z-index: 5;           /* über der Tabelle halten */
+}
+
+/* Optional: Card-Look, damit’s sich klar absetzt */
+.entry-bar {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  /* deine bestehenden Layout-Regeln bleiben */
+  display: flex;
+  align-items: flex-end;   /* du hattest 'end' – besser 'flex-end' */
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
 /* Inhalt & Tabelle */
 .container {
   max-width: 1100px;
