@@ -218,13 +218,6 @@ th { background-color: #f2f2f2; }
 }
 
 /* Eingabezeile über der Tabelle */
-.entry-bar {
-  display: flex;
-  align-items: flex-end;
-  gap: 16px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;                 /* bricht sauber auf kleineren Screens */
-}
 
 .entry-fields {
   display: grid;
@@ -260,9 +253,12 @@ th { background-color: #f2f2f2; }
 
 .entry-actions {
   display: flex;
+  margin-left: auto; 
   align-items: center;
   gap: 8px;
-  margin-left: auto;               /* Buttons nach rechts */
+  flex-wrap: nowrap;      /* Buttons + Hinweis in EINER Zeile halten */
+  flex: 0 1 auto;         /* Block kann als Ganzes umbrüchen, nicht innen */
+  min-width: 0;              /* Buttons nach rechts */
 }
 
 /* Button-Varianten wiederverwenden */
@@ -300,13 +296,15 @@ th { background-color: #f2f2f2; }
 
 .form-error {
   color: #e53935;
-  white-space: nowrap;       /* kein Zeilenumbruch */
-  overflow: hidden;          /* nichts umbrechen */
-  text-overflow: ellipsis;
+  white-space: nowrap;     /* kein Zeilenumbruch */
+  overflow: hidden;        /* für Ellipsis */
+  text-overflow: ellipsis; /* … am Ende */
   font-weight: 700;
   display: inline-block;
-  min-height: 1em;        /* reserviert Platz, auch wenn kein Text */
-  margin: 4px 2px 8px;
+  min-height: 1em;
+  margin: 0 0 0 8px;       /* Platz links neben den Buttons */
+  max-width: clamp(160px, 30vw, 420px);
+  min-width: 0;
 }
 
 .field input.invalid,
