@@ -10,9 +10,10 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   display: flex;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  width: 100%;
 }
 .navbar {
   max-width: 1100px;
@@ -87,7 +88,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-position: center 100px;
+  background-position: center calc(100px + var(--header-h));
   min-height: 100vh;
   padding: 40px;                    /* früherer body-Margin */
 }
@@ -95,8 +96,8 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
 /* Sticky-Container für die Eingabefelder (wie Sidebar) */
 .entry-sticky {
   position: sticky;
-  top: 16px;            /* Abstand zum oberen Viewport, wie .sidebar */
-  z-index: 5;           /* über der Tabelle halten */
+  top: calc(var(--header-h) + var(--gap));
+  z-index: 900;            /* über der Tabelle halten */
 }
 
 /* Optional: Card-Look, damit’s sich klar absetzt */
@@ -158,7 +159,8 @@ th { background-color: #f2f2f2; }
   padding: 16px;
   box-shadow: 0 2px 10px rgba(0,0,0,.06);
   position: sticky;   /* bleibt beim Scrollen sichtbar */
-  top: 16px;
+  top: calc(var(--header-h) + var(--gap));
+  z-index: 800;
 }
 
 .sidebar-logo {
@@ -318,14 +320,10 @@ th { background-color: #f2f2f2; }
 
 :root {
   --header-h: 96px;     /* reale Höhe deines Headers */
-  --header-zone: 160px; /* Höhe der Klebe-Zone (>= Headerhöhe) */
+   --gap: 0px;         /* zusätzlicher Abstand unter dem Header (falls gewünscht) */
 }
 
-/* Der Header klebt nur innerhalb der Zone */
-.header-zone {
-  position: relative;
-  height: var(--header-zone);   /* bestimmt, wie lange der Header mitläuft */
-}
+
 
 
 
