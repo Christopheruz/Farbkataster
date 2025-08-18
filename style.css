@@ -316,6 +316,17 @@ th { background-color: #f2f2f2; }
   box-shadow: 0 0 0 2px rgba(229,57,53,.15);
 }
 
+:root {
+  --header-h: 96px;     /* reale Höhe deines Headers */
+  --header-zone: 160px; /* Höhe der Klebe-Zone (>= Headerhöhe) */
+}
+
+/* Der Header klebt nur innerhalb der Zone */
+.header-zone {
+  position: relative;
+  height: var(--header-zone);   /* bestimmt, wie lange der Header mitläuft */
+}
+
 
 
 
