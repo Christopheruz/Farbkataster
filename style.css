@@ -334,6 +334,20 @@ th { background-color: #f2f2f2; }
   margin-top: 8px; /* optional, kann auch 0 bleiben */
 }
 
+.fn-input{
+  height: 36px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 180px;
+  max-width: 28ch;
+}
+@media (max-width: 560px){
+  .fn-input{ flex: 1 1 auto; min-width: 140px; }
+}
+
+
 
 
 
