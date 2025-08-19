@@ -109,6 +109,7 @@
   const fileInput  = document.getElementById('fileInput');
   const fileNameEl = document.getElementById('fileName');
   const outputEl   = document.getElementById('output');
+  const bearbeiter = document.getElementById('bearbeiter');
 
   // Filter aus der Sidebar (falls vorhanden)
   const inpGebFilter  = document.getElementById('filterGebaeude');
@@ -330,10 +331,22 @@ addGebSel?.addEventListener('change', () => {
 
   // ---------- Excel speichern
   btnSave?.addEventListener('click', () => {
-    if (!wb) { alert('Keine Daten zum Speichern. Bitte zuerst eine Excel-Datei laden.'); return; }
-    const fn = originalFileName.replace(/(\.xlsx?|\.xlsm)$/i, '-bearbeitet$1');
-    XLSX.writeFile(wb, fn === originalFileName ? (originalFileName + '-bearbeitet.xlsx') : fn);
-  });
+  if (!wb) { alert('Keine Daten zum Speichern. Bitte zuerst eine Excel-Datei laden.'); return; }
+
+  // Basisname & Extension ermitteln
+  const isXlsm = /\.xlsm$/i.test(originalFileName);
+  const ext = isXlsm ? '.xlsm' : '.xlsx';
+  const base = (originalFileName || 'Export.xlsx').replace(/\.(xlsx?|xlsm)$/i, '') || 'Export';
+
+  // Bearbeiter anhängen (verbotene Zeichen entfernen, Leerzeichen zu _)
+  const tagRaw = (bearbeiter?.value || '').trim();
+  const tagSan = tagRaw.replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '_');
+
+  const finalName = base + (tagSan ? '-' + tagSan : '') + ext;
+
+  XLSX.writeFile(wb, finalName);
+});
+
 
   // Live-Filter (Sidebar)
   inpGebFilter?.addEventListener('input', applyFilters);
