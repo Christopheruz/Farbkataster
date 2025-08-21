@@ -7,8 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
-<div class="header-zone">
- <header class="site-header">
+<header class="site-header">
   <nav class="navbar">
     <!-- Upload zuerst (links) -->
     <div class="header-actions">
@@ -25,7 +24,7 @@
     </div>
   </nav>
 </header>
-</div> 
+
 
 
   <div class="page-background">
@@ -240,6 +239,20 @@
 
   function setupFiltering() { findHeaderIndexesForFilter(); applyFilters(); }
 
+  async function appendLocalEntries() {
+  const saved = await LocalDB.all();
+  if (!saved.length) return;
+  const cols = aoa[0].length;
+  for (const e of saved) {
+    const r = new Array(cols).fill('');
+    if (colIdx.geb  != null) r[colIdx.geb]  = e.geb;
+    if (colIdx.raum != null) r[colIdx.raum] = e.raum;
+    if (colIdx.farb != null) r[colIdx.farb] = e.farb;
+    if (colIdx.prod != null) r[colIdx.prod] = e.prod;
+    aoa.push(r);
+  }
+}
+
   // ---------- Datei laden
   fileInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
@@ -248,7 +261,7 @@
     if (fileNameEl) fileNameEl.textContent = originalFileName;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
       const data = new Uint8Array(e.target.result);
       wb = XLSX.read(data, { type: 'array' });
       sheetName = wb.SheetNames[0] || 'Tabelle1';
@@ -257,6 +270,7 @@
       aoa = XLSX.utils.sheet_to_json(ws, { header: 1 }) || [];
       ensureHeaders();
       findHeaderIndexesFromAoa();
+      await appendLocalEntries(); 
       renderAndSetup();
     };
     reader.readAsArrayBuffer(file);
@@ -279,6 +293,8 @@
   if (!r) missing.push(addRaum);
   if (!f) missing.push(addFarb);
   if (!p) missing.push(addProd);
+
+    
 
   // Markieren + Meldung
   [addGebSel, addRaum, addFarb, addProd].forEach(el => {
@@ -305,6 +321,10 @@
   if (colIdx.prod != null) row[colIdx.prod] = p;
 
   aoa.push(row);
+    
+  LocalDB.add({ geb: g, raum: r, farb: f, prod: p, created: Date.now() })
+  .catch(console.warn);
+
 
   // Felder leeren
   addGebSel.value = '';
@@ -312,7 +332,9 @@
   addFarb.value = '';
   addProd.value = '';
 
-  renderAndSetup();
+  
+
+ renderAndSetup();
 });
 
 // Invalid-Markierung live entfernen
@@ -354,7 +376,59 @@ addGebSel?.addEventListener('change', () => {
   btnClear?.addEventListener('click', () => { if (inpGebFilter) inpGebFilter.value=''; if (inpRaumFilter) inpRaumFilter.value=''; applyFilters(); });
 </script>
 
-</body>
+  
+<script>
+/* ========== Offline-Datenbank (IndexedDB) ========== */
+const LocalDB = (() => {
+  const DB = 'farbarchiv', STORE = 'eintraege', VERSION = 1;
+  let db;
+  function open() {
+    return new Promise((res, rej) => {
+      const req = indexedDB.open(DB, VERSION);
+      req.onupgradeneeded = () => {
+        const d = req.result;
+        if (!d.objectStoreNames.contains(STORE)) {
+          const s = d.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+          s.createIndex('created','created');
+        }
+      };
+      req.onsuccess = () => res(req.result);
+      req.onerror   = () => rej(req.error);
+    });
+  }
+  async function ready(){ return db || (db = await open()); }
+  async function add(entry){
+    const d = await ready();
+    return new Promise((res, rej) => {
+      const tx = d.transaction(STORE,'readwrite');
+      tx.objectStore(STORE).add(entry);
+      tx.oncomplete = () => res();
+      tx.onerror    = () => rej(tx.error);
+    });
+  }
+  async function all(){
+    const d = await ready();
+    return new Promise((res, rej) => {
+      const tx = d.transaction(STORE,'readonly');
+      const rq = tx.objectStore(STORE).getAll();
+      rq.onsuccess = () => res(rq.result || []);
+      rq.onerror   = () => rej(rq.error);
+    });
+  }
+  async function clear(){
+    const d = await ready();
+    return new Promise((res, rej) => {
+      const tx = d.transaction(STORE,'readwrite');
+      tx.objectStore(STORE).clear();
+      tx.oncomplete = () => res();
+      tx.onerror    = () => rej(tx.error);
+    });
+  }
+  return { add, all, clear };
+})();
+</script>
+
+  </body>
 </html>
 
 
