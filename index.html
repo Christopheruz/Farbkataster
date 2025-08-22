@@ -352,21 +352,38 @@ addGebSel?.addEventListener('change', () => {
 });
 
   // ---------- Excel speichern
-  btnSave?.addEventListener('click', () => {
+  btnSave?.addEventListener('click', async () => {
   if (!wb) { alert('Keine Daten zum Speichern. Bitte zuerst eine Excel-Datei laden.'); return; }
 
-  // Basisname & Extension ermitteln
+  // Dateinamen bauen (inkl. Bearbeiter)
   const isXlsm = /\.xlsm$/i.test(originalFileName);
-  const ext = isXlsm ? '.xlsm' : '.xlsx';
+  const ext  = isXlsm ? '.xlsm' : '.xlsx';
   const base = (originalFileName || 'Export.xlsx').replace(/\.(xlsx?|xlsm)$/i, '') || 'Export';
-
-  // Bearbeiter anhängen (verbotene Zeichen entfernen, Leerzeichen zu _)
   const tagRaw = (bearbeiter?.value || '').trim();
   const tagSan = tagRaw.replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '_');
-
   const finalName = base + (tagSan ? '-' + tagSan : '') + ext;
 
+  // 1) Excel speichern (Download)
   XLSX.writeFile(wb, finalName);
+
+  // 2) Lokale (IndexedDB) Einträge löschen
+  try { await LocalDB.clear(); } catch (e) { console.warn('LocalDB.clear() Fehler:', e); }
+
+  // 3) Outlook öffnen (mailto) – Anhang muss auf file:// manuell hinzugefügt werden
+  const subject = 'aktuelle Farbtondatenbank';
+  const bodyLines = [
+    'Hallo,',
+    '',
+    'anbei die aktuelle Farbtondatenbank.',
+    '',
+    `Dateiname: ${finalName}`,
+    '',
+    'Hinweis: Bitte die gespeicherte Excel-Datei manuell als Anhang hinzufügen (meist im Download-Ordner).'
+  ];
+  const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join('\r\n'))}`;
+
+  // kleiner Delay, damit der Download-Dialog nicht vom Mailto überholt wird
+  setTimeout(() => { window.location.href = mailto; }, 350);
 });
 
 
