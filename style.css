@@ -346,6 +346,19 @@ th { background-color: #f2f2f2; }
 @media (max-width: 560px){
   .fn-input{ flex: 1 1 auto; min-width: 140px; }
 }
+/* Lesbarer Hintergrund für den Intro-Text */
+.intro-card{
+  background: rgba(255,255,255,0.92);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  margin-bottom: 16px;
+}
+.intro-card h1{ margin-top: 0; }
+
 
 
 
