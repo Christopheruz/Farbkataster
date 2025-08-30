@@ -71,11 +71,12 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   margin-left: auto;      /* schiebt das Logo nach rechts */
   display: flex;
   align-items: center;
+  height: var(--header-h);
   cursor: default;        /* klarstellen: nicht klickbar */
 }
 
 .header-logo img{
-  height: 40px;           /* Logo-Höhe im Header */
+  height: 100%;           /* Logo-Höhe im Header */
   width: auto;
   object-fit: contain;
   image-rendering: auto;
@@ -141,7 +142,7 @@ th { background-color: #f2f2f2; }
 
 /* Responsive Tweaks */
 @media (max-width: 720px) {
-  .site-header { min-height: 80px; }
+  .site-header { height: var(--header-h); }
   .navbar { gap: 12px; }
   .links { margin-left: 0; width: 100%; justify-content: flex-end; flex-wrap: wrap; }
   .page-background { padding: 20px; }
@@ -327,7 +328,7 @@ th { background-color: #f2f2f2; }
 
 :root {
   --header-h: 96px;     /* reale Höhe deines Headers */
-   --gap: 0px;         /* zusätzlicher Abstand unter dem Header (falls gewünscht) */
+   --gap: 10px;         /* zusätzlicher Abstand unter dem Header (falls gewünscht) */
   --bg-offset: 20px;   /* war effektiv ~100px -> kleiner = Bild höher */
   --intro-gap: 40px;   /* Abstand des Introtexts zum Header */
 }
