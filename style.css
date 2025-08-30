@@ -6,7 +6,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
 .site-header {
   background: #357593;
   color: #fff;
-  min-height: 96px;                 /* Höhe des Headers */
+  height: var(--header-h);                     /* Höhe des Headers */
   display: flex;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0,0,0,.08);
@@ -16,6 +16,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   width: 100%;
 }
 .navbar {
+  height: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 24px;
@@ -71,7 +72,7 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   margin-left: auto;      /* schiebt das Logo nach rechts */
   display: flex;
   align-items: center;
-  height: var(--header-h);
+  height: 100%; 
   cursor: default;        /* klarstellen: nicht klickbar */
 }
 
@@ -79,15 +80,9 @@ body { margin: 0; font-family: Arial, sans-serif; color: #111; }
   height: 100%;           /* Logo-Höhe im Header */
   width: auto;
   object-fit: contain;
-  image-rendering: auto;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.06));
+  display: block;
+  
 }
-
-@media (min-width: 1100px){
-  .header-logo img{ height: 48px; }
-}
-
-
 
 /* Hintergrundbild erst unterhalb des Headers */
 .page-background {
